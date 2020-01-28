@@ -1,0 +1,180 @@
+---
+title: "HW2"
+author: "Caitlin Sutherland"
+date: "28/01/2020"
+output: html_document
+---
+
+### Scenario 1
+
+There are concerns that the Deepwater Horizon oil spill of 2010 negatively impacted the shrimp fishing industry in the Gulf of Mexico. To test this hypothesis, data from shrimp fishing ships in 2009 and 2010 were collected to compare the catch at various sites around the Gulf before and after the spill.
+
+```{r}
+shrimp.data=read.csv("scenario1.csv")
+shrimp.data
+avg2009=mean(shrimp.data$catch2009)
+avg2010=mean(shrimp.data$catch2010)
+avgdiff=avg2009-avg2010
+decline=avgdiff/avg2009*100
+```
+
+The mean shrimp catch at sites in the Gulf of Mexico was `r format(avg2009,scientific=FALSE)` tonnes in 2009 and `r format(avg2010,scientific=FALSE)` tonnes in 2010, indicating a decline of `r format(avgdiff,scientific=FALSE)` tonnes of shrimp caught, on average, at the test sites between the two years. This is a `r format(decline,scientific=FALSE)`% difference in catch. Additional analysis is needed to determine whether this difference is statistically significant.
+
+**Null hypothesis:** The oil spill in the Gulf of Mexico had no effect on the shrimp fishing industry (the observed difference in mean catch is not statistically significant).
+
+**Alternative hypothesis:** The oil spill in the Gulf of Mexico affected the shrimp fishing industry (the observed difference in mean catch is statistically significant).
+
+**Histograms**
+
+```{r}
+hist(shrimp.data$catch2009,main='Distribution of shrimp catch per site in Gulf of Mexico in 2009',xlab='Catch (tonnes)',ylab='Observed frequency',ylim=c(0,5),col="cadetblue3")
+hist(shrimp.data$catch2010,main='Distribution of shrimp catch per site in Gulf of Mexico in 2010',xlab='Catch (tonnes)',ylab='Observed frequency',ylim=c(0,5),col='khaki3')
+```
+
+
+**Test to be performed:** A paired two-tailed Student's t-test will be performed to assess the data. The significance level for this test will be alpha = 0.05.
+
+```{r}
+t.test(shrimp.data$catch2009,shrimp.data$catch2010,paired=TRUE)
+```
+**Test results:** The t-value returned by the paired t-test is 6.3808. The p-value returned by the paired t-test is 0.00002415.
+
+```{r}
+Rtail=qt(0.975,13)
+Ltail=qt(0.025,13)
+```
+**Critical value of the test statistic:** The critical values (T-values) of the test statistic are `r Rtail` (right tail) and `r Ltail` (left tail). 
+
+**Observed value of the test statistic:** The observed value of the test statistic is t = 6.3808. This is well beyond the critical value of the test statistic.
+
+**Conclusion:** The p-value of the test (0.00002415) is less than a = 0.05, therefore we reject the null hypothesis that the oil spill in the Gulf of Mexico had no effect on the shrimp fishing industry in the area. The observed difference in average catch between 2009 and 2010 is statistically significant.
+
+### Scenario 2
+
+The guideline for total phosphorous in Lake Erie is set at a maximum of 15 ug/L. A number of phosphorous measurements were taken from around the lake.
+
+```{r}
+lake.erie=read.csv("scenario2.csv")
+lake.erie
+meanP=mean(lake.erie$TotalP)
+```
+
+The mean phosphorous measurement taken at Lake Erie is `r meanP` ug/L. This is higher than the maximum set out by the guideline. However, additional analysis is needed to determine whether this difference is statistically significant.
+
+**Null hypothesis:** The concentration of phosphorus in Lake Erie is not above the guidelines (i.e. the percieved difference between the mean and the limit is not statistically significant and can be attributed to sampling error).
+
+**Alternative hypothesis:** The concentration of phosphorus in Lake Erie is above the guideline (i.e. the difference between the mean and the limit is statistically significant).
+
+**Histogram**
+
+```{r}
+hist(lake.erie$TotalP,main="Distribution of phosphorous measurements in Lake Erie",xlab="Phosphorus measurement (ug/L)",ylab="Observed frequency",ylim=c(0,4),col="thistle3")
+```
+
+**Test to be performed:** A one sample Student's t-test will be performed to assess the data. The significance level for this test will be alpha = 0.05.
+
+```{r}
+t.test(lake.erie$TotalP)
+```
+
+
+**Test results:** The t-value returned by the one sample t-test is 13.681. The p-value returned by the test is 2.503 x 10^-7. 
+
+```{r}
+Rtail2=qt(0.975,9)
+Ltail2=qt(0.025,9)
+```
+
+**Critical value of the test statistic:** The critical values (T-values) of the test statistic are `r Rtail2` (right tail) and `r Ltail2` (left tail).
+
+**Observed value of the test statistic:** The observed value of the test statistic is t = 13.681. This is well beyond the critical value of the test statistic.
+
+**Conclusion:** The p-value of the test (2.503 x 10^-7) is less than a = 0.05, therefore we reject the null hypothesis that the phosphorus measurement taken is not statistically significant. The observed mean phosphorous concentration of `r meanP` ug/L is greater than the guideline maximum of 15 ug/L and is not a result of sampling error.
+
+### Scenario 3
+
+The following growth rates (% body weight/day) were collected from salmon placed on a carnivorous diet and salmon placed on a vegetarian diet.
+
+```{r}
+salmon.growth=read.csv("scenario3.csv")
+salmon.growth
+meanCarn=mean(salmon.growth$Carnivorous)
+meanVeg=mean(salmon.growth$Vegetarian)
+```
+
+The mean daily growth rate of salmon placed on a carnivorous diet is `r meanCarn`%/day while the mean daily growth rate of salmon placed on a vegetarian diet is `r meanVeg`%/day. Additional analysis is needed to determine whether the difference between these two means is statistically significant.
+
+**Null hypothesis:** The daily growth rate of salmon placed on a vegetarian diet is not different from the daily growth rate of salmon placed on a carnivorous diet (i.e. the observed difference is not statistically significant).
+
+**Alternative hypothesis:** The daily growth rate of salmon placed on a vegetarian diet is different from the daily growth rate of salmon placed on a carnivorous diet (i.e. the observed difference is statistically significant).
+
+**Histogram**
+
+```{r}
+hist(salmon.growth$Carnivorous,main="Distribution of daily growth rates among carnivorous salmon",xlab="Daily growth rate (% body weight/day)",ylab="Observed frequency",col="indianred3")
+
+hist(salmon.growth$Vegetarian,main="Distribution of daily growth rates among vegetarian salmon",xlab="Daily growth rate (% body weight/day)",ylab="Observed frequency",col="darkolivegreen3")
+```
+
+
+**Test to be performed:** A two sample Student's t-test will be performed to assess the data. The significance level for this test will be alpha = 0.05. 
+
+```{r}
+t.test(salmon.growth$Carnivorous,salmon.growth$Vegetarian)
+```
+
+**Test results:** The t-value returned by the two sample t-test is 12.237. The p-value returned by the test is 1.008 x 10^-12. 
+
+```{r}
+Rtail3=qt(0.975,14)
+Ltail3=qt(0.025,14)
+```
+
+**Critical value of the test statistic:** The critical values (T-values) of the test statistic are `r Rtail3` (right tail) and `r Ltail3` (left tail).
+
+**Observed value of the test statistic:** The observed value of the test statistic is t = 12.237.This is well beyond the critical value of the test statistic.
+
+**Conclusion:** The p-value of the test (1.008 x 10^-12) is less than a = 0.05, therefore we reject the null hypothesis that the daily growth rate of salmon on a vegetarian diet is not different than the daily growth rate of salmon on a carnivorous diet. The observed difference in mean daily growth rate between the two diets is statistically significant.
+
+### Scenario 4
+
+The data below will be analysed to determine whether the severity of the symptoms of PCB poisoning are independent of an organism's trophic level or not. 
+
+```{r}
+first.level=c(133,100,17)
+top.predator=c(4,61,35)
+effect=c("No effect", "No reproduction", "Death")
+PCB.effects=data.frame('FirstLevel'=first.level,'Predator'=top.predator) #this data frame does not include the effect vector as it is not deeded for the chi square function
+PCB.effects
+```
+
+**Null hypothesis:** There is no difference in the effects of PCB at different trophic levels (i.e. the variables are independent).
+
+**Alternative hypothesis:** There is a difference in the effects of PCB at different trophic levels (i.e. the variables are dependent).
+
+**Histogram**
+
+```{r}
+hist(first.level,main="Distribution of PCB effects on first trophic level",xlab="Number of individuals affected",ylab="Frequency",ylim=c(0,2),col="lightblue")
+
+hist(first.level,main="Distribution of PCB effects on top predators",xlab="Number of individuals affected",ylab="Frequency",ylim=c(0,2),col="pink")
+```
+#Struggled with how to transform/present the data into the histograms in this scenario. Not happy with this presentation.
+
+**Test to be performed:** A Chi-squared test will be performed to test for independence among these two categorical variables.
+
+```{r}
+chisq.test(PCB.effects)
+```
+
+**Test results:** The observed X2 value returned by the test is 89.253 and the p-value returned by the test is < 2.2 x 10-16. 
+
+```{r}
+pcb.crit=qchisq(0.95,2)
+```
+
+**Critical value of the test statistic:** The critical X2 value with a confidence value of 0.95 and 2 degrees of freedom is `r pcb.crit`. 
+
+**Observed value of the test statistic:** The observed X2 value is 89.253. 
+
+**Conclusion:** Since the observed X2 value (89.253) exceeds the critical X2 value (5.99) the null hypothesis is rejected. We fail to reject the alternative hypothesis that there is a difference in the effects of PCB at different trophic levels. 
